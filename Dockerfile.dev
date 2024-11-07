@@ -1,0 +1,28 @@
+# Use the official Rust slim image as the base image
+FROM rust:slim
+
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a non-root user named dev
+RUN useradd -ms /bin/bash dev
+
+# Switch to the dev user
+USER dev
+
+# Set the working directory
+WORKDIR /home/dev
+
+# Install the target
+RUN rustup target add wasm32-unknown-unknown
+
+# Install the Stellar CLI
+RUN cargo install --locked stellar-cli --features opt
+
+# Enable stellar completion to generate shell completion for bash
+RUN echo "source <(stellar completion --shell bash)" >> ~/.bashrc
+
+CMD [ "tail", "-f", "/dev/null" ]
