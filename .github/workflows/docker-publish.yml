@@ -1,9 +1,7 @@
 name: Build and Push Docker Image
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -25,10 +23,8 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Build and Push Docker Image
+      - name: Build and Push Docker Image (Local Network)
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: |
-            ${{ secrets.DOCKER_HUB_USERNAME }}/rust-with-stellar-cli:latest
-            ${{ secrets.DOCKER_HUB_USERNAME }}/rust-with-stellar-cli:${{ github.sha }}
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/rust-with-stellar-cli:local
