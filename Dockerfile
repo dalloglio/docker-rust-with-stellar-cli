@@ -21,6 +21,9 @@ RUN rustup target add wasm32-unknown-unknown
 # Install Stellar CLI with locked dependencies
 RUN cargo install --locked stellar-cli --features opt
 
+# Enable stellar completion to generate shell completion for bash
+RUN echo "source <(stellar completion --shell bash)" >> ~/.bashrc
+
 
 # Build for local network
 FROM dalloglio/rust-with-stellar-cli:base AS setup-network
