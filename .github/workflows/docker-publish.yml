@@ -1,10 +1,12 @@
 name: Build and Push Docker Image
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
-  build:
+  build-base:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,9 +25,47 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-      - name: Build and Push Docker Image (Local Network)
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
           push: true
           target: base
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/rust-with-stellar-cli:base
+
+  build-networks:
+    runs-on: ubuntu-latest
+    needs: build-base
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build and Push Docker Image for local network
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          target: setup-network
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/rust-with-stellar-cli:local
+
+      - name: Build and Push Docker Image for testnet network
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          target: setup-network
+          build-args: |
+            STELLAR_NETWORK="testnet"
+            STELLAR_RPC_URL="https://soroban-testnet.stellar.org:443"
+            STELLAR_NETWORK_PASSPHRASE="Test SDF Network ; September 2015"
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/rust-with-stellar-cli:testnet
