@@ -3,14 +3,18 @@ ARG STELLAR_NETWORK="local"
 ARG STELLAR_RPC_URL="http://stellar:8000/rpc"
 ARG STELLAR_NETWORK_PASSPHRASE="Standalone Network ; February 2017"
 
-# Use the official Rust image with Alpine to reduce size
-FROM rust:1.82.0-alpine3.20 AS builder
+# Use the official Rust slim image as the base image
+FROM rust:1.82.0-slim AS builder
 
-# Install necessary dependencies in a minimized way
-RUN apk add --no-cache build-base bash
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    bash \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create a non-root user
-RUN adduser -D bob
+RUN useradd -ms /bin/bash bob
 
 # Switch to the bob user and set the working directory
 USER bob
