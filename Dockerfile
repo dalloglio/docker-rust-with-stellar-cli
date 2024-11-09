@@ -39,8 +39,5 @@ RUN stellar network add \
     --rpc-url ${STELLAR_RPC_URL} \
     --network-passphrase "${STELLAR_NETWORK_PASSPHRASE}"
 
-# Set up a test identity for the bob user
-RUN stellar keys generate --global bob --network ${STELLAR_NETWORK}
-
 # Default command (this is an example; adjust as needed)
 CMD [ "tail", "-f", "/dev/null" ]

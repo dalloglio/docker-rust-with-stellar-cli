@@ -87,6 +87,26 @@ docker compose exec app bash
 
 This command opens a bash shell in the `app` service container, allowing you to run commands, execute scripts, and directly interact with the configured environment for development.
 
+To set up a test identity for the bob user, run:
+
+```bash
+stellar keys generate --global bob --network local
+```
+
+This command will create a new wallet for the bob user and automatically fund the account with 10,000 XLM on the local network.
+
+To view bob's public key, use:
+
+```bash
+stellar keys address bob
+```
+
+To view bob's secret key, use:
+
+```bash
+stellar keys show bob
+```
+
 ## GitHub Actions
 
 The GitHub Actions workflow (`.github/workflows/build-and-push.yml`) automates building and pushing the Docker image to Docker Hub.

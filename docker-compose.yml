@@ -1,11 +1,13 @@
 services:
+  app:
+    image: dalloglio/rust-with-stellar-cli:local
+    container_name: app
+    volumes:
+      - .:/home/bob/app
+
   stellar:
-    image: stellar/quickstart
+    image: stellar/quickstart:testing
     container_name: stellar
     ports:
       - "8000:8000"
     command: ["--local"]
-  
-  app:
-    image: dalloglio/rust-with-stellar-cli:local
-    container_name: app
